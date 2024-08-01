@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 
 //middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   console.log("This is awesome.");
   next(); // forward the request
