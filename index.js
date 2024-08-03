@@ -1,6 +1,7 @@
 //server
 const express = require("express");
 const app = express();
+const PORT = 3000;
 
 const mockdata = [
   {
@@ -73,6 +74,6 @@ app.use((err, req, res, next) => {
 });
 
 //port
-app.listen(3000, () => {
-  console.log("Server Started.");
+app.listen(PORT, () => {
+  console.log(`Server running at: http://localhost:${PORT}`);
 });
