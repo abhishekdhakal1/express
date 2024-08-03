@@ -45,7 +45,7 @@ app.use((req, res, next) => {
 });
 
 //route
-app.get("/api/about", (req, res) => {
+app.get("/api/users", (req, res) => {
   const {
     query: { filter, value },
   } = req; // destructuring query params
@@ -64,7 +64,7 @@ app.post("/api/users", (req, res) => {
 });
 
 //route params
-app.get("/api/about/:id", (req, res) => {
+app.get("/api/users/:id", (req, res) => {
   //console.log(req.params);
   const parsedId = parseInt(req.params.id);
   //console.log(parsedId);
@@ -80,7 +80,7 @@ app.get("/api/about/:id", (req, res) => {
 //   res.status(500).send("Something broke! We don't know");
 // });
 
-app.patch("/api/about/:id", (req, res) => {
+app.patch("/api/users/:id", (req, res) => {
   const {
     body,
     params: { id },
@@ -89,11 +89,24 @@ app.patch("/api/about/:id", (req, res) => {
   const findUserIndex = mockdata.findIndex((user) => user.id === parsedId);
 
   if (findUserIndex === -1) {
-    return res.status(400).send('User not found');
+    return res.status(400).send("User not found");
   }
 
   mockdata[findUserIndex] = { ...mockdata[findUserIndex], ...body }; //spread operator
   return res.status(200).send(mockdata[findUserIndex]);
+});
+
+app.delete("/api/users/:id", (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  const parsedId = parseInt(id);
+  const findUserIndex = mockdata.findIndex((user) => user.id === parsedId);
+  if (findUserIndex === -1) {
+    return res.status(400).send("User not found");
+  }
+  mockdata.splice(findUserIndex);
+  return res.status(200);
 });
 
 //port
