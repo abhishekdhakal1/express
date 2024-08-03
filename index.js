@@ -20,8 +20,18 @@ const mockdata = [
   },
   {
     id: 4,
-    first_name: "Marketa",
+    first_name: "Market",
     last_name: "Morling",
+  },
+  {
+    id: 5,
+    first_name: "Kzerallaa",
+    last_name: "Leong",
+  },
+  {
+    id: 6,
+    first_name: "Hjerketa",
+    last_name: "Koling",
   },
 ];
 
@@ -35,13 +45,22 @@ app.use((req, res, next) => {
 
 //route
 app.get("/api/about", (req, res) => {
-  res.status(200).send(mockdata);
+  const {
+    query: { filter, value },
+  } = req; // destructuring query params
+
+  if(filter && value){
+    return res.send(mockdata.filter((user)=> user.first_name.includes(value)));
+  } 
+  return res.status(200).send(mockdata);
 });
 
+//route params
 app.get("/api/about/:id", (req, res) => {
-  console.log(req.params);
+  //console.log(req.params);
   const parsedId = parseInt(req.params.id);
   //console.log(parsedId);
+  console.log(req.query);
   const user = mockdata.find((user) => user.id === parsedId);
   if (!user) return res.status(404).send({ msg: "bad request" });
   return res.send(user);
