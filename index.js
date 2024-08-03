@@ -50,10 +50,17 @@ app.get("/api/about", (req, res) => {
     query: { filter, value },
   } = req; // destructuring query params
 
-  if(filter && value){
-    return res.send(mockdata.filter((user)=> user.first_name.includes(value)));
-  } 
+  if (filter && value) {
+    return res.send(mockdata.filter((user) => user.first_name.includes(value)));
+  }
   return res.status(200).send(mockdata);
+});
+
+app.post("/api/users", (req, res) => {
+  const { body } = req;
+  const newUser = { id: mockdata[mockdata.length - 1].id + 1, ...body };
+  mockdata.push(newUser);
+  return res.status(201).send(newUser);
 });
 
 //route params
@@ -61,16 +68,32 @@ app.get("/api/about/:id", (req, res) => {
   //console.log(req.params);
   const parsedId = parseInt(req.params.id);
   //console.log(parsedId);
-  console.log(req.query);
+  //console.log(req.query);
   const user = mockdata.find((user) => user.id === parsedId);
   if (!user) return res.status(404).send({ msg: "bad request" });
   return res.send(user);
 });
 
 //error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something broke! We don't know");
+// app.use((err, req, res, next) => {
+//   console.error(err.stack);
+//   res.status(500).send("Something broke! We don't know");
+// });
+
+app.patch("/api/about/:id", (req, res) => {
+  const {
+    body,
+    params: { id },
+  } = req;
+  const parsedId = parseInt(id, 10);
+  const findUserIndex = mockdata.findIndex((user) => user.id === parsedId);
+
+  if (findUserIndex === -1) {
+    return res.status(400).send('User not found');
+  }
+
+  mockdata[findUserIndex] = { ...mockdata[findUserIndex], ...body }; //spread operator
+  return res.status(200).send(mockdata[findUserIndex]);
 });
 
 //port
