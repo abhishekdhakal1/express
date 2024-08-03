@@ -22,7 +22,7 @@ app
 //error handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send("Something broke! We don't know.");
+  res.status(500).send("Something broke! We don't know");
 });
 
 //port
