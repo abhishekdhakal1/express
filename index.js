@@ -3,7 +3,14 @@ const express = require("express");
 const app = express();
 const PORT = 3000;
 const mockdata = require("./mockdata.json");
-const {query} = require("express-validator");
+const { createUserValidationSchema } = require('./utils/validationSchema.js');
+const {
+  query,
+  validationResult,
+  body,
+  matchedData,
+  checkSchema,
+} = require("express-validator");
 
 const findUserIndex = (req, res, next) => {
   const {
@@ -22,20 +29,38 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.send("Hello from express.");
 });
-app.get("/api/users", (req, res) => {
-  const {
-    query: { filter, value },
-  } = req; // destructuring query params
+app.get(
+  "/api/users",
+  query("filter")
+    .isString()
+    .notEmpty()
+    .withMessage("It cannot be empty")
+    .isLength({ min: 3, max: 5 })
+    .withMessage("Mininum length must be 3 and max must be 5"),
+  (req, res) => {
+    const result = validationResult(req);
+    console.log(result);
+    const {
+      query: { filter, value },
+    } = req; // destructuring query params
 
-  if (filter && value) {
-    return res.send(mockdata.filter((user) => user.first_name.includes(value)));
+    if (filter && value) {
+      return res.send(
+        mockdata.filter((user) => user.first_name.includes(value))
+      );
+    }
+    return res.status(200).send(mockdata);
   }
-  return res.status(200).send(mockdata);
-});
+);
 
-app.post("/api/users", (req, res) => {
-  const { body } = req;
-  const newUser = { id: mockdata[mockdata.length - 1].id + 1, ...body };
+app.post("/api/users", checkSchema(createUserValidationSchema), (req, res) => {
+  const result = validationResult(req);
+  if (!result.isEmpty())
+    //isEmpty returns true or false
+    return res.status(400).send({ errors: result.array() }); // array returns error message
+  const data = matchedData(req);
+  // console.log(data);
+  const newUser = { id: mockdata[mockdata.length - 1].id + 1, ...data };
   mockdata.push(newUser);
   return res.status(201).send(newUser);
 });
@@ -47,7 +72,6 @@ app.get("/api/users/:id", (req, res) => {
   if (!user) return res.status(404).send({ msg: "bad request" });
   return res.send(user);
 });
-
 app.patch("/api/users/:id", findUserIndex, (req, res) => {
   const { body, findUserIndex } = req;
 
