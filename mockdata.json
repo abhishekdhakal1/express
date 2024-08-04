@@ -1,0 +1,28 @@
+
+[
+    {
+      "id": 1,
+      "first_name": "Nepal",
+      "last_name": "Ram"
+    },
+    {
+      "id": 2,
+      "first_name": "Jesse",
+      "last_name": "Pinkmaan"
+    },
+    {
+      "id": 3,
+      "first_name": "Walter",
+      "last_name": "White"
+    },
+    {
+      "id": 4,
+      "first_name": "Hank",
+      "last_name": "Dao"
+    },
+    {
+      "id": 5,
+      "first_name": "Saul",
+      "last_name": "Goodman"
+    }
+  ]
