@@ -37,10 +37,27 @@ const mockdata = [
 ];
 
 //middleware
+// const loggingMiddleware = (req, res, next) =>{
+//  console.log(`${req.method}-${req.url}`)
+//  next();
+// };
+
+const findUserIndex = (req, res, next) =>{
+  const {
+    params: { id },
+  } = req;
+  const parsedId = parseInt(id, 10);
+  const findUserIndex = mockdata.findIndex((user) => user.id === parsedId);
+  req.findUserIndex = findUserIndex;
+  next();
+}
+
+//app.use(loggingMiddleware);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
-  console.log("This is awesome.");
+  console.log("This is middleware.");
   next(); // forward the request
 });
 
@@ -80,13 +97,11 @@ app.get("/api/users/:id", (req, res) => {
 //   res.status(500).send("Something broke! We don't know");
 // });
 
-app.patch("/api/users/:id", (req, res) => {
+app.patch("/api/users/:id",findUserIndex, (req, res) => {
   const {
     body,
-    params: { id },
+    findUserIndex,
   } = req;
-  const parsedId = parseInt(id, 10);
-  const findUserIndex = mockdata.findIndex((user) => user.id === parsedId);
 
   if (findUserIndex === -1) {
     return res.status(400).send("User not found");
@@ -96,12 +111,12 @@ app.patch("/api/users/:id", (req, res) => {
   return res.status(200).send(mockdata[findUserIndex]);
 });
 
-app.delete("/api/users/:id", (req, res) => {
+app.delete("/api/users/:id",findUserIndex, (req, res) => {
   const {
-    params: { id },
+    findUserIndex
   } = req;
-  const parsedId = parseInt(id);
-  const findUserIndex = mockdata.findIndex((user) => user.id === parsedId);
+  //const parsedId = parseInt(id);
+  //const findUserIndex = mockdata.findIndex((user) => user.id === parsedId);
   if (findUserIndex === -1) {
     return res.status(400).send("User not found");
   }
