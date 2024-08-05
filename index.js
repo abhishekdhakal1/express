@@ -4,6 +4,7 @@ const app = express();
 const PORT = 3000;
 const mockdata = require("./mockdata.json");
 const { createUserValidationSchema } = require("./utils/validationSchema.js");
+const {router} = require("./routes/users.js")
 const {
   query,
   validationResult,
@@ -23,35 +24,36 @@ const findUserIndex = (req, res, next) => {
 };
 
 app.use(express.json());
+app.use(router);
 app.use(express.urlencoded({ extended: true }));
 
 //route
 app.get("/", (req, res) => {
   res.send("Hello from express.");
 });
-app.get(
-  "/api/users",
-  query("filter")
-    .isString()
-    .notEmpty()
-    .withMessage("It cannot be empty")
-    .isLength({ min: 3, max: 5 })
-    .withMessage("Mininum length must be 3 and max must be 5"),
-  (req, res) => {
-    const result = validationResult(req);
-    console.log(result);
-    const {
-      query: { filter, value },
-    } = req; // destructuring query params
+// app.get(
+//   "/api/users",
+//   query("filter")
+//     .isString()
+//     .notEmpty()
+//     .withMessage("It cannot be empty")
+//     .isLength({ min: 3, max: 5 })
+//     .withMessage("Mininum length must be 3 and max must be 5"),
+//   (req, res) => {
+//     const result = validationResult(req);
+//     console.log(result);
+//     const {
+//       query: { filter, value },
+//     } = req; // destructuring query params
 
-    if (filter && value) {
-      return res.send(
-        mockdata.filter((user) => user.first_name.includes(value))
-      );
-    }
-    return res.status(200).send(mockdata);
-  }
-);
+//     if (filter && value) {
+//       return res.send(
+//         mockdata.filter((user) => user.first_name.includes(value))
+//       );
+//     }
+//     return res.status(200).send(mockdata);
+//   }
+// );
 
 app.post("/api/users", checkSchema(createUserValidationSchema), (req, res) => {
   const result = validationResult(req);
