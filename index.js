@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const PORT = 3000;
 const mockdata = require("./mockdata.json");
-const { createUserValidationSchema } = require('./utils/validationSchema.js');
+const { createUserValidationSchema } = require("./utils/validationSchema.js");
 const {
   query,
   validationResult,
