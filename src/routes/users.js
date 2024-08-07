@@ -10,10 +10,6 @@ const { createUserValidationSchema } = require("../utils/validationSchema.js");
 const router = Router();
 const { findUserIndex } = require("../utils/middlewares.js");
 
-router.get("/", (req, res) => {
-  res.send("Hello from express.");
-});
-
 router.get("/api/users/:id", (req, res) => {
   const parsedId = parseInt(req.params.id);
   const user = mockdata.find((user) => user.id === parsedId);
